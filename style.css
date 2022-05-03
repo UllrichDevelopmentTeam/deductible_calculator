@@ -8,7 +8,29 @@
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 
+  /* add the below styles to wordpress page css */
+
   .hidden{
       display: none;
       visibility: hidden;
   }
+
+  #hidden_section_1, #hidden_section_2, #hidden_section_3, #hidden_section_4{
+      margin: 10px 0px;
+  }
+
+  form{
+      position: relative;
+  }
+
+  label{
+      font-weight: bold;
+  }
+
+  input{
+    height: 25px;
+}
+
+.error{
+    color: red;
+}

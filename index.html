@@ -5,25 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- only need to include specified styles on the css on wordpress (especially for the logic) -->
-    <!-- copy the styles for hidden! -->
+    <!-- !look at style.css for which styles to copy to the wordpress page! -->
     <link rel="stylesheet" href="style.css">
     <title>Deductible Calculator</title>
 </head>
 <body>
     <h1>Is it worth it to take a higher deductible?</h1>
-    <!-- ^ note don't copy the h1 into the wordpress site ^ -->
+    <!-- copy everything below until end of body for wordpress site -->
     <p>Why give the insurance company more than you need to? Sometimes it does make sense to take a higher deductible and take more risk upon yourself.</p>
     <p>Taking a higher deductible is a two sided coin:</p>
-    <p>On one side, taking a higher deductible will save you money on your insurance premium. <br>
-     On the other side, if you have a claim, you would need to pay the higher deductible.</p>
+    <p>On one side, taking a higher deductible will save you money on your insurance premium.</p>
+    <p>On the other side, if you have a claim, you would need to pay the higher deductible.</p>
     <p>This analysis will help you decide if it would make sense to take a higher deductible.</p>
 
     <!-- maybe change the brs to css formatting (see what it looks like on wordpress first!!!) -->
     <form>
         <label for="lower_deductible">Lower Deductible: </label>
-        <input type="number" step="any" min="1" name="lower_deductible" id="lower_deductible" onchange="calculate_diff(), calculate_break_even()">
+        <input type="number" step="any" min="1" name="lower_deductible" id="lower_deductible" onchange="calculate_diff(), calculate_break_even()"> <br>
+        <span class="error hidden" id="lower_error"></span>
         <label for="higher_deductible">Higher Deductible: </label>
-        <input type="number" step="any" min="1" name="higher_deductible" id="higher_deductible" onchange="calculate_diff(), calculate_break_even()">
+        <input type="number" step="any" min="1" name="higher_deductible" id="higher_deductible" onchange="calculate_diff(), calculate_break_even(), generate_higher_errors()">
+        <span class="error hidden" id="higher_error"></span>
     </form>
 
     <div class="hidden" id="hidden_section_1">
@@ -31,14 +33,14 @@
     <form>
         <label for="amount_saved">If you take a higher deductible, you save money. This is the amount that you save every year by taking the higher deductible: </label>
         <input type="number" step="any" min="1" name="amount_saved" id="amount_saved" onchange="calculate_break_even(), calculate_extra_money()">
-    </form>
+    </form> <br>
     </div>
     <div class="hidden" id="hidden_section_2">
         <span id="break_even_section"></span>
     </div>
 
     <div class="hidden" id="hidden_section_3">
-        <span id="summary_section"></span>
+        <span id="summary_section"></span> <br>
         <form>
             <label for="extra_money">Based upon the figures above, type a number of years here: </label>
             <input type="number" step="any" min="1" name="extra_money" id="extra_money" onchange="calculate_extra_money()">       
@@ -48,8 +50,6 @@
     <div class="hidden" id="hidden_section_4">
         <span id="extra_money_section"></span>
     </div>
-
-</body>
 <script>
     const lower_deductible = document.querySelector('#lower_deductible');
     const higher_deductible = document.querySelector('#higher_deductible');
@@ -69,6 +69,11 @@
     const hidden_section_3 = document.querySelector('#hidden_section_3');
     const hidden_section_4 = document.querySelector('#hidden_section_4');
 
+    // error sections
+    // (not currently in use)
+    // const lower_error = document.querySelector('#lower_error');
+    // const higher_error = document.querySelector('#higher_error');
+
     // formating for currency values (code from https://stackoverflow.com/questions/149055/how-to-format-numbers-as-currency-strings) 
     let currency_formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -80,8 +85,10 @@
         if(lower_deductible.value === '' || higher_deductible.value === ''){
             // don't do anything if they are both empty
             hidden_section_1.classList.add('hidden');
+            // generate_errors();
             return;
-        } 
+        }
+        // hide_all_errors(); 
         hidden_section_1.classList.remove('hidden');
         difference_value = higher_deductible.value-lower_deductible.value;
         difference.innerHTML = currency_formatter.format(higher_deductible.value-lower_deductible.value);       
@@ -127,5 +134,30 @@
         `;
     }
 
+    // if we want to add error functionality later on
+    // function generate_errors(){
+    //     if(lower_deductible.value === "" || lower_deductible.value <= 0){
+    //         lower_error.classList.remove('hidden');
+    //         lower_error.innerHTML = `<p>Please enter a value for the lower deductible</p>`;
+    //     } 
+    // }
+
+    // // special errors that have to do with the higher deductible
+    // function generate_higher_errors(){
+    //     if(higher_deductible.value === "" || higher_deductible.value <= 0){
+    //         higher_error.classList.remove('hidden');
+    //         higher_error.innerHTML = `<p>Please enter a value for the higher deductible</p>`;
+    //     } else if (higher_deductible.value <= lower_deductible.value){
+    //         higher_error.classList.remove('hidden');
+    //         higher_error.innerHTML = `<p>Error: Higher deductible amount must be greater than lower deductible amount</p>`;
+    //     }
+
+    // }
+
+    // function hide_all_errors(){
+    //     lower_error.classList.add('hidden');
+    //     higher_error.classList.add('hidden');
+    // }
 </script>
+</body>
 </html>
