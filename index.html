@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- only need to include specified styles on the css on wordpress (especially for the logic) -->
+    <!-- copy the styles for hidden! -->
+    <link rel="stylesheet" href="style.css">
+    <title>Deductible Calculator</title>
+</head>
+<body>
+    <h1>Is it worth it to take a higher deductible?</h1>
+    <!-- ^ note don't copy the h1 into the wordpress site ^ -->
+    <p>Why give the insurance company more than you need to? Sometimes it does make sense to take a higher deductible and take more risk upon yourself.</p>
+    <p>Taking a higher deductible is a two sided coin:</p>
+    <p>On one side, taking a higher deductible will save you money on your insurance premium. <br>
+     On the other side, if you have a claim, you would need to pay the higher deductible.</p>
+    <p>This analysis will help you decide if it would make sense to take a higher deductible.</p>
+
+    <!-- maybe change the brs to css formatting (see what it looks like on wordpress first!!!) -->
+    <form>
+        <label for="lower_deductible">Lower Deductible: </label>
+        <input type="number" step="any" min="1" name="lower_deductible" id="lower_deductible" onchange="calculate_diff(), calculate_break_even()">
+        <label for="higher_deductible">Higher Deductible: </label>
+        <input type="number" step="any" min="1" name="higher_deductible" id="higher_deductible" onchange="calculate_diff(), calculate_break_even()">
+    </form>
+
+    <div class="hidden" id="hidden_section_1">
+    <p>Higher amount that you will pay if you have a claim (higher deductible minus the lower deductible): <span id="difference"></span></p>
+    <form>
+        <label for="amount_saved">If you take a higher deductible, you save money. This is the amount that you save every year by taking the higher deductible: </label>
+        <input type="number" step="any" min="1" name="amount_saved" id="amount_saved" onchange="calculate_break_even(), calculate_extra_money()">
+    </form>
+    </div>
+    <div class="hidden" id="hidden_section_2">
+        <span id="break_even_section"></span>
+    </div>
+
+    <div class="hidden" id="hidden_section_3">
+        <span id="summary_section"></span>
+        <form>
+            <label for="extra_money">Based upon the figures above, type a number of years here: </label>
+            <input type="number" step="any" min="1" name="extra_money" id="extra_money" onchange="calculate_extra_money()">       
+        </form>
+    </div>
+
+    <div class="hidden" id="hidden_section_4">
+        <span id="extra_money_section"></span>
+    </div>
+
+</body>
+<script>
+    const lower_deductible = document.querySelector('#lower_deductible');
+    const higher_deductible = document.querySelector('#higher_deductible');
+    const amount_saved = document.querySelector('#amount_saved');
+    let difference = document.querySelector('#difference');
+    let difference_value = 0;
+    const break_even_section = document.querySelector('#break_even_section');
+    let break_even_point = 0;
+    const summary_section = document.querySelector('#summary_section');
+    let extra_money = 0;
+    const entered_years = document.querySelector('#extra_money');
+    const extra_money_section = document.querySelector('#extra_money_section');
+
+    // hidden sections
+    const hidden_section_1 = document.querySelector('#hidden_section_1');
+    const hidden_section_2 = document.querySelector('#hidden_section_2');
+    const hidden_section_3 = document.querySelector('#hidden_section_3');
+    const hidden_section_4 = document.querySelector('#hidden_section_4');
+
+    // formating for currency values (code from https://stackoverflow.com/questions/149055/how-to-format-numbers-as-currency-strings) 
+    let currency_formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+    });
+
+    // calculates the difference and unhides the first hidden section
+    function calculate_diff(){
+        if(lower_deductible.value === '' || higher_deductible.value === ''){
+            // don't do anything if they are both empty
+            hidden_section_1.classList.add('hidden');
+            return;
+        } 
+        hidden_section_1.classList.remove('hidden');
+        difference_value = higher_deductible.value-lower_deductible.value;
+        difference.innerHTML = currency_formatter.format(higher_deductible.value-lower_deductible.value);       
+    }
+
+    function calculate_break_even(){
+        if(amount_saved.value === '' || lower_deductible.value === '' || higher_deductible.value === ''){
+            // don't do anything if these are empty
+            hidden_section_2.classList.add('hidden');
+            return;
+        } 
+        hidden_section_2.classList.remove('hidden');
+        // TODO: ONLY MAKE THIS HAVE ZEROS IF IT IS NOT A WHOLE NUMBER
+        break_even_point = (difference_value/amount_saved.value).toFixed(2);
+        break_even_section.innerHTML = ` <p>Break even point: ${break_even_point} years </p>
+        <p>Taking a higher deductible will save you money every year, but if you have a claim, you will pay a higher amount.
+             If you have a claim in less than ${break_even_point} years then it would make sense to pay more and take the lower deductible.
+             But, if you don't have a claim in ${break_even_point} years then it would make sense to save money and take a higher deductible.</p>
+        `;
+        generate_summary();
+    }
+
+    function generate_summary(){
+        if(amount_saved.value === '' || lower_deductible.value === '' || higher_deductible.value === ''){
+            hidden_section_3.classList.add('hidden');
+            return;
+        } 
+        hidden_section_3.classList.remove('hidden');
+        summary_section.innerHTML = `
+        <p>If we increase your deductible from ${currency_formatter.format(lower_deductible.value)} to ${currency_formatter.format(higher_deductible.value)}, then you will have a higher risk of ${currency_formatter.format(difference_value)} but you will save ${currency_formatter.format(amount_saved.value)}</p>
+        <p>This means that if you have a claim in ${break_even_point} years, then you are better off paying more and taking the lower deductible. But if you don't have a claim in ${break_even_point} years, then you will have the money in your pocket. Every year that you don't have a claim, you have more and more money in your pocket. </p> 
+        `;
+    }
+
+    function calculate_extra_money(){
+        if(entered_years.value === '' || amount_saved.value === ''){
+            hidden_section_4.classList.add('hidden');
+            return;
+        }
+        hidden_section_4.classList.remove('hidden');
+        extra_money = amount_saved.value*entered_years.value;
+        extra_money_section.innerHTML = `If you don't have a claim in ${entered_years.value} years, you will have ${currency_formatter.format(extra_money)} of extra money in your pocket.</p>
+        `;
+    }
+
+</script>
+</html>
