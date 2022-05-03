@@ -19,21 +19,21 @@
     <p>This analysis will help you decide if it would make sense to take a higher deductible.</p>
 
     <!-- maybe change the brs to css formatting (see what it looks like on wordpress first!!!) -->
-    <form>
+    
         <label for="lower_deductible">Lower Deductible: </label>
         <input type="number" step="any" min="1" name="lower_deductible" id="lower_deductible" onchange="calculate_diff(), calculate_break_even()"> <br>
         <span class="error hidden" id="lower_error"></span>
         <label for="higher_deductible">Higher Deductible: </label>
         <input type="number" step="any" min="1" name="higher_deductible" id="higher_deductible" onchange="calculate_diff(), calculate_break_even(), generate_higher_errors()">
         <span class="error hidden" id="higher_error"></span>
-    </form>
+    
 
     <div class="hidden" id="hidden_section_1">
     <p>Higher amount that you will pay if you have a claim (higher deductible minus the lower deductible): <span id="difference"></span></p>
-    <form>
+    
         <label for="amount_saved">If you take a higher deductible, you save money. This is the amount that you save every year by taking the higher deductible: </label>
         <input type="number" step="any" min="1" name="amount_saved" id="amount_saved" onchange="calculate_break_even(), calculate_extra_money()">
-    </form> <br>
+     <br>
     </div>
     <div class="hidden" id="hidden_section_2">
         <span id="break_even_section"></span>
@@ -41,10 +41,8 @@
 
     <div class="hidden" id="hidden_section_3">
         <span id="summary_section"></span> <br>
-        <form>
-            <label for="extra_money">Based upon the figures above, type a number of years here: </label>
-            <input type="number" step="any" min="1" name="extra_money" id="extra_money" onchange="calculate_extra_money()">       
-        </form>
+        <label for="extra_money">Based upon the figures above, type a number of years here: </label>
+        <input type="number" step="any" min="1" name="extra_money" id="extra_money" onchange="calculate_extra_money()">       
     </div>
 
     <div class="hidden" id="hidden_section_4">
@@ -158,6 +156,7 @@
     //     lower_error.classList.add('hidden');
     //     higher_error.classList.add('hidden');
     // }
+
 </script>
 </body>
 </html>
