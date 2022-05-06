@@ -31,6 +31,11 @@
     height: 25px;
 }
 
+/* if you want to make some of the inputs full size */
+/* .big_input{
+    width: 100%;
+} */
+
 .error{
     color: red;
 }
